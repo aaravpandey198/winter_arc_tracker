@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Winter Arc Tracker ❄️</title>
+<style>
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0b1220;
+        color: #e8f0ff;
+    }
+    .container { max-width: 1250px; margin: auto; padding: 24px; }
+    h1 { margin: 0 0 6px; font-size: 34px; }
+    .subtitle { color: #9db0c9; margin-bottom: 22px; }
+    .top {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    .card {
+        background: #111c2e;
+        border: 1px solid #263b59;
+        border-radius: 14px;
+        padding: 16px;
+    }
+    .number { font-size: 28px; font-weight: bold; }
+    .label { color: #9db0c9; font-size: 13px; margin-top: 4px; }
+    .controls { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; }
+    button {
+        background:#172943; color:#fff; border:1px solid #345477;
+        padding:10px 15px; border-radius:9px; cursor:pointer;
+    }
+    button:hover { background:#203958; }
+    .week {
+        background:#0f1929;
+        border:1px solid #263b59;
+        border-radius:16px;
+        margin-bottom:18px;
+        overflow:hidden;
+    }
+    .week-title {
+        padding:14px 16px;
+        background:#14243a;
+        font-weight:bold;
+        display:flex;
+        justify-content:space-between;
+    }
+    .day {
+        border-top:1px solid #263b59;
+        padding:15px;
+    }
+    .day-head {
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:10px;
+        margin-bottom:12px;
+    }
+    .day-name { font-weight:bold; font-size:17px; }
+    .date-text { color:#8fa6c2; font-size:13px; }
+    .badge {
+        padding:5px 9px; border-radius:20px; font-size:12px;
+        background:#193653; color:#9ed8ff;
+    }
+    .tasks {
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+        gap:9px;
+    }
+    label.task {
+        display:flex; align-items:center; gap:9px;
+        padding:10px; background:#111f32; border-radius:9px;
+        border:1px solid #20354f; cursor:pointer;
+    }
+    label.task:hover { border-color:#4678a8; }
+    input[type=checkbox] {
+        width:18px; height:18px; accent-color:#35b7ff;
+        cursor:pointer;
+    }
+    .done { text-decoration:line-through; opacity:.55; }
+    .progress {
+        height:7px; background:#1b2b42; border-radius:10px; overflow:hidden;
+        margin-top:12px;
+    }
+    .bar { height:100%; background:#35b7ff; width:0%; transition:.2s; }
+    .empty { color:#7187a2; text-align:center; padding:30px; }
+    @media(max-width:800px) {
+        .top { grid-template-columns:repeat(2,1fr); }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>❄️ WINTER ARC TRACKER</h1>
+    <div class="subtitle">Discipline × Skills × Fitness × Better Me — your progress is saved on this PC.</div>
+
+    <div class="top">
+        <div class="card"><div class="number" id="daysDone">0</div><div class="label">Perfect days</div></div>
+        <div class="card"><div class="number" id="totalDone">0</div><div class="label">Tasks completed</div></div>
+        <div class="card"><div class="number" id="weekPercent">0%</div><div class="label">Current week</div></div>
+        <div class="card"><div class="number" id="streak">0</div><div class="label">Current streak</div></div>
+    </div>
+
+    <div class="controls">
+        <button onclick="goToday()">📅 Go to today</button>
+        <button onclick="resetAll()">⚠️ Reset all data</button>
+        <button onclick="exportData()">💾 Export progress</button>
+    </div>
+
+    <div id="tracker"></div>
+</div>
+
+<script>
+const START = new Date();
+START.setHours(0,0,0,0);
+
+const routines = {
+    0: ["Weekly academic revision","LeetCode / DSA","AI / Backend project","Muay Thai (optional/light)","Weekly review & planning","Sleep 7–8h"],
+    1: ["College","Study / college revision","Internship skill / project","LeetCode","Gym","Muay Thai","Sleep 7–8h"],
+    2: ["College","Study / college revision","LeetCode","Gym","Sleep 7–8h"],
+    3: ["College","Study / college revision","Internship skill / project","LeetCode","Gym","Sleep 7–8h"],
+    4: ["College","Study / college revision","Internship skill / project","LeetCode","Muay Thai","Sleep 7–8h"],
+    5: ["College","Study / college revision","LeetCode","Gym","Muay Thai (light)","AI / Backend project","Sleep 7–8h"],
+    6: ["College","Study / college revision","LeetCode","Gym","Sleep 7–8h"]
+};
+
+const names = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const KEY = "winterArcTracker_v1";
+
+function load() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
+    catch(e) { return {}; }
+}
+let data = load();
+
+function keyFor(d) {
+    return d.toISOString().slice(0,10);
+}
+function pretty(d) {
+    return d.toLocaleDateString(undefined,{weekday:"long",day:"2-digit",month:"short",year:"numeric"});
+}
+function save() {
+    localStorage.setItem(KEY, JSON.stringify(data));
+    updateStats();
+}
+function toggle(dayKey, i, el) {
+    if (!data[dayKey]) data[dayKey] = {};
+    data[dayKey][i] = el.checked;
+    el.parentElement.classList.toggle("done", el.checked);
+    save();
+    updateDayProgress(dayKey);
+}
+function updateDayProgress(dayKey) {
+    const box = document.querySelector(`[data-day="${dayKey}"]`);
+    if (!box) return;
+    const checks = box.querySelectorAll("input[type=checkbox]");
+    const done = [...checks].filter(x=>x.checked).length;
+    const pct = checks.length ? Math.round(done/checks.length*100) : 0;
+    box.querySelector(".bar").style.width = pct+"%";
+    box.querySelector(".pct").textContent = pct+"%";
+}
+function render() {
+    const root = document.getElementById("tracker");
+    root.innerHTML = "";
+    for (let w=0; w<12; w++) {
+        const week = document.createElement("div");
+        week.className = "week";
+        const ws = new Date(START);
+        ws.setDate(START.getDate() + w*7);
+        week.innerHTML = `<div class="week-title"><span>WEEK ${w+1}</span><span>${ws.toLocaleDateString(undefined,{day:"2-digit",month:"short"})} →</span></div>`;
+        for (let j=0; j<7; j++) {
+            const d = new Date(ws);
+            d.setDate(ws.getDate()+j);
+            const dayKey = keyFor(d);
+            const dow = d.getDay();
+            const tasks = routines[dow];
+            const saved = data[dayKey] || {};
+            const day = document.createElement("div");
+            day.className = "day";
+            day.dataset.day = dayKey;
+            day.id = "day-"+dayKey;
+            const taskHTML = tasks.map((t,i)=>{
+                const checked = !!saved[i];
+                return `<label class="task ${checked?'done':''}">
+                    <input type="checkbox" ${checked?'checked':''} onchange="toggle('${dayKey}',${i},this)">
+                    <span>${t}</span>
+                </label>`;
+            }).join("");
+            day.innerHTML = `
+                <div class="day-head">
+                    <div>
+                        <div class="day-name">${names[dow]}</div>
+                        <div class="date-text">${pretty(d)}</div>
+                    </div>
+                    <div><span class="badge">${dow===0?'REST / RESET':(dow===1||dow===3||dow===5||dow===6?'GYM DAY':'MUAY THAI DAY')}</span></div>
+                </div>
+                <div class="tasks">${taskHTML}</div>
+                <div class="progress"><div class="bar"></div></div>
+                <div class="date-text" style="margin-top:6px"><span class="pct">0%</span> complete</div>
+            `;
+            week.appendChild(day);
+        }
+        root.appendChild(week);
+    }
+    for (const k of Object.keys(data)) updateDayProgress(k);
+    updateStats();
+}
+function updateStats() {
+    let total=0, done=0, perfect=0;
+    const today = new Date(); today.setHours(0,0,0,0);
+    for (let w=0; w<12; w++) {
+        const ws = new Date(START); ws.setDate(START.getDate()+w*7);
+        for(let j=0;j<7;j++){
+            const d=new Date(ws); d.setDate(ws.getDate()+j);
+            const arr=routines[d.getDay()];
+            const s=data[keyFor(d)]||{};
+            const n=arr.filter((_,i)=>s[i]).length;
+            total += arr.length; done += n;
+            if(n===arr.length) perfect++;
+        }
+    }
+    document.getElementById("daysDone").textContent=perfect;
+    document.getElementById("totalDone").textContent=done;
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate()-today.getDay());
+    let wd=0, wt=0;
+    for(let j=0;j<7;j++){
+        const d=new Date(weekStart); d.setDate(weekStart.getDate()+j);
+        const arr=routines[d.getDay()], s=data[keyFor(d)]||{};
+        wt+=arr.length; wd+=arr.filter((_,i)=>s[i]).length;
+    }
+    document.getElementById("weekPercent").textContent=Math.round(wd/wt*100)+"%";
+    let streak=0;
+    for(let offset=0;offset<84;offset++){
+        const d=new Date(today); d.setDate(today.getDate()-offset);
+        const arr=routines[d.getDay()], s=data[keyFor(d)]||{};
+        if(arr.length && arr.every((_,i)=>s[i])) streak++;
+        else if(offset===0) continue;
+        else break;
+    }
+    document.getElementById("streak").textContent=streak;
+}
+function goToday(){
+    const el=document.getElementById("day-"+keyFor(new Date()));
+    if(el) el.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function resetAll(){
+    if(confirm("Reset ALL Winter Arc progress? This cannot be undone.")){
+        data={}; localStorage.removeItem(KEY); render();
+    }
+}
+function exportData(){
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download="winter-arc-progress.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+render();
+</script>
+</body>
+</html>
