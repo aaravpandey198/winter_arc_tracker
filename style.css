@@ -1,0 +1,293 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0b1220;
+    color: #e8f0ff;
+}
+
+.container {
+    max-width: 1250px;
+    margin: auto;
+    padding: 24px;
+}
+
+h1 {
+    margin: 0 0 6px;
+    font-size: 34px;
+    letter-spacing: 0.5px;
+}
+
+.subtitle {
+    color: #9db0c9;
+    margin-bottom: 22px;
+}
+
+/* Top Stats Grid */
+.top {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.card {
+    background: #111c2e;
+    border: 1px solid #263b59;
+    border-radius: 14px;
+    padding: 16px;
+    position: relative;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+/* Featured NoFap Streak Card */
+.card.nofap-card {
+    background: linear-gradient(135deg, #221224 0%, #2f1422 100%);
+    border: 1px solid #ff4b4b;
+    box-shadow: 0 4px 18px rgba(255, 75, 75, 0.15);
+}
+
+.card.nofap-card .number {
+    color: #ff5252;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.card.nofap-card .unit {
+    font-size: 15px;
+    color: #ff9d9d;
+    font-weight: 500;
+}
+
+.card.nofap-card .label {
+    color: #ffb8b8;
+    font-weight: 600;
+}
+
+.nofap-status {
+    font-size: 11px;
+    margin-top: 6px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    display: inline-block;
+    background: rgba(255, 82, 82, 0.15);
+    color: #ff8585;
+}
+
+.nofap-status.active {
+    background: rgba(74, 222, 128, 0.15);
+    color: #4ade80;
+}
+
+.number {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.label {
+    color: #9db0c9;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+button {
+    background: #172943;
+    color: #fff;
+    border: 1px solid #345477;
+    padding: 10px 15px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s;
+}
+
+button:hover {
+    background: #203958;
+}
+
+button.danger:hover {
+    background: #631a1a;
+    border-color: #992929;
+}
+
+.week {
+    background: #0f1929;
+    border: 1px solid #263b59;
+    border-radius: 16px;
+    margin-bottom: 18px;
+    overflow: hidden;
+}
+
+.week-title {
+    padding: 14px 16px;
+    background: #14243a;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.day {
+    border-top: 1px solid #263b59;
+    padding: 15px;
+    transition: background 0.15s;
+}
+
+.day.is-today {
+    background: rgba(53, 183, 255, 0.05);
+    border-left: 4px solid #35b7ff;
+}
+
+.day-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.day-name {
+    font-weight: bold;
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.date-text {
+    color: #8fa6c2;
+    font-size: 13px;
+}
+
+.badges-group {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+    background: #193653;
+    color: #9ed8ff;
+}
+
+.badge-nofap-clean {
+    background: #46142c;
+    color: #ff85a8;
+    border: 1px solid #8e2b5b;
+    font-weight: bold;
+}
+
+.badge-today {
+    background: #104169;
+    color: #63d4ff;
+    border: 1px solid #226b9c;
+}
+
+.tasks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 9px;
+}
+
+label.task {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px;
+    background: #111f32;
+    border-radius: 9px;
+    border: 1px solid #20354f;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+label.task:hover {
+    border-color: #4678a8;
+}
+
+/* Highlighted NoFap task item */
+label.task.nofap-task {
+    background: linear-gradient(90deg, #251221 0%, #151c2d 100%);
+    border: 1px solid #862d5b;
+    font-weight: bold;
+    color: #ffc4db;
+}
+
+label.task.nofap-task:hover {
+    border-color: #ff4d79;
+    box-shadow: 0 0 10px rgba(255, 77, 121, 0.2);
+}
+
+label.task.nofap-task input[type=checkbox] {
+    accent-color: #ff3366;
+}
+
+input[type=checkbox] {
+    width: 18px;
+    height: 18px;
+    accent-color: #35b7ff;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.done {
+    text-decoration: line-through;
+    opacity: 0.55;
+}
+
+.nofap-task.done {
+    opacity: 0.9;
+    text-decoration: none;
+    border-color: #4ade80;
+    color: #a7f3d0;
+    background: #0e2920;
+}
+
+.nofap-task.done span::after {
+    content: " ✔";
+    color: #4ade80;
+}
+
+.progress {
+    height: 7px;
+    background: #1b2b42;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+.bar {
+    height: 100%;
+    background: #35b7ff;
+    width: 0%;
+    transition: 0.2s;
+}
+
+@media(max-width: 800px) {
+    .top {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
