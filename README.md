@@ -1,19 +1,15 @@
-# Winter Arc Tracker
+# Winter Arc & NoFap Tracker ❄️🔥
 
-A simple, editable 12-week habit tracker made with plain HTML, CSS, and JavaScript.
+A sleek, 12-week habit and discipline tracker with dedicated NoFap clean streak tracking made with vanilla HTML, CSS, and JavaScript.
 
-## Run it
-1. Extract the ZIP.
-2. Open `index.html` in Chrome or Edge.
-3. Tick your daily tasks. Progress is saved in your browser's localStorage.
+## Features
+- **🔥 NoFap Streak Counter:** Dedicated live streak counter that tracks consecutive clean days and resets whenever a day is not checked or missed.
+- **⚡ Daily NoFap Checklist:** Featured "No Fap (Clean Day)" item highlighted on every single day with active badges.
+- **📊 Winter Arc Statistics:** Tracks perfect days, total tasks completed, weekly completion percentage, and overall routine streaks.
+- **💾 Local Storage & Export/Import:** All data persists locally in your browser. Easily export and import JSON backup files.
+- **📅 Go to Today:** Jump directly to today's schedule with one click.
 
-## Edit it
-- **Routine/task names:** Find the `const routines = { ... }` section in `index.html`.
-- **Colors and layout:** Edit the CSS inside the `<style>` section.
-- **Tracker behavior:** Edit the JavaScript inside the `<script>` section.
-
-## Important
-- Progress is saved only in the same browser on the same PC.
-- Use **Export progress** in the tracker to download a JSON backup.
-- Clearing browser data may remove saved progress, so export backups occasionally.
-- No installation or server is required.
+## How to Run
+1. Open `index.html` in your browser (Chrome, Edge, Firefox, Brave).
+2. Check off your daily tasks and NoFap status.
+3. Your streak and progress update in real-time.
